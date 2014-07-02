@@ -1,0 +1,10 @@
+{
+    "_links": {
+        "self": { "href" : "/api" },
+        "data": { "href":"/api/data/v1/exampleUser"},
+        "intents": { "href":"/api/intents/v1"},
+        "applications": { "href":"/api/application/v1"},
+        "user": { "href":"/api/user/v1/exampleUser"},
+        "system": { "href":"/api/system/v1"}
+    }
+}

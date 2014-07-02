@@ -1,0 +1,40 @@
+{
+    "name" : "Green Bouncing Ball",
+    "description" : "A green bouncing ball",
+    "type" : "application",
+    "state" : "active",
+    "uiHints": {
+        "width" : 400,
+        "height" : 400,
+        "singleton" : false
+    },
+    "tags": [
+        "demo"
+    ],
+    "intents": [
+        {
+            "type": "application/ozp-demo-ball+json",
+            "action": "view",
+            "icon": "http://localhost:15001/largeIcon.png",
+            "label": "Green Ball"
+        }
+    ],
+
+    "_links": {
+        "self" : { "href": "/api/application/v1/23456"},
+        "launch" : [{ 
+            "href": "http://localhost:15001/?color=green",
+            "name": "default"
+         }],
+         "icons" : [
+             {"name":"small", "href":"http://localhost:15001/largeIcon.png"},
+             {"name":"large", "href":"http://localhost:15001/smallIcon.png"}
+         ],
+        "screenShots" : [
+            {
+                "href" : "http://localhost:15001/screenShot.png",
+                "title" : "A screenshot"
+            }
+        ]
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "_embedded": {
+        "actions": [{
+            "type": "application/ozp-demo-ball+json",
+            "action": "view",
+            "icon": "http://example.com/view-text-plain.png",
+            "label": "View a bouncing ball",
+            "_links": {
+                "self" : "/api/intents/application/ozp-demo-ball+json/view"
+            }
+        }]
+    }
+}

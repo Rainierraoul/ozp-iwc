@@ -122,7 +122,12 @@ module.exports = function(grunt) {
     },
 		connect: {
 			app: {        
-				options:{ port: 13000,base: "app", debug: true}
+				options:{ 
+                    port: 13000,
+                    base: ["app","sampleData"],
+                    index: "index.json",
+                    debug: true
+                }
 			},
             tests: {
                 options:{ port: 14000, base: ["app","test/tests"]	}
@@ -158,8 +163,6 @@ module.exports = function(grunt) {
 
   };
 	grunt.initConfig(config);
-	console.log("FILES: ",grunt.file.expand(grunt.config.get('src.bus')));
-	
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-concat');

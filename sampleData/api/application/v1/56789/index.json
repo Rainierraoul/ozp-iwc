@@ -1,0 +1,33 @@
+{
+    "name" : "Gridster Layout",
+    "description" : "A sample container that presents widgets in a tile based layout",
+    "type" : "container",
+    "state" : "active",
+    "uiHints": {
+        "width" : 400,
+        "height" : 400,
+        "singleton" : false
+    },
+    "tags": [
+        "demo"
+    ],
+    "intents": [],
+
+    "_links": {
+        "self" : { "href": "/api/application/v1/56789"},
+        "launch" : [{ 
+            "href": "http://localhost:15004",
+            "name": "default"
+         }],
+         "icons" : [
+             {"name":"small", "href":"http://localhost:15004/largeIcon.png"},
+             {"name":"large", "href":"http://localhost:15004/smallIcon.png"}
+         ],
+        "screenShots" : [
+            {
+                "href" : "http://localhost:15004/screenShot.png",
+                "title" : "A screenshot"
+            }
+        ]
+    }
+}

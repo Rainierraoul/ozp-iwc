@@ -1,0 +1,13 @@
+{
+    "_embedded": {
+        "actions": [{
+            "type": "text/plain",
+            "action": "view",
+            "icon": "http://example.com/view-text-plain.png",
+            "label": "View as plain text",
+            "_links": {
+                "self" : "/api/intents/text/plain/view"
+            }
+        }]
+    }
+}

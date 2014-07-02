@@ -1,0 +1,6 @@
+{
+  "type": "application/ozp-demo-ball+json",
+  "action": "view",
+  "icon": "http://example.com/view-text-plain.png",
+  "label": "View a bouncing ball"
+}

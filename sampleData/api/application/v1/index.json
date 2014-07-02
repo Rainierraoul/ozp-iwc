@@ -1,0 +1,13 @@
+{
+    "_links": {
+        "self": "/api/application/v1",
+        "applications": [
+            { "href": "/api/application/v1/12345", "title": "Blue Bouncing Balls" },
+            { "href": "/api/application/v1/23456", "title": "Green Bouncing Balls" },
+            { "href": "/api/application/v1/34567", "title": "Red Bouncing Balls" },
+            { "href": "/api/application/v1/45678", "title": "Orange Bouncing Balls" },
+            { "href": "/api/application/v1/56789", "title": "Gridster Layout" },
+            { "href": "/api/application/v1/67890", "title": "IWC Debugger" }
+        ]
+    }
+}

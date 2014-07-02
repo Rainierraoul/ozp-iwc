@@ -1,0 +1,40 @@
+{
+    "name" : "Red Bouncing Ball",
+    "description" : "A red bouncing ball",
+    "type" : "application",
+    "state" : "active",
+    "uiHints": {
+        "width" : 400,
+        "height" : 400,
+        "singleton" : false
+    },
+    "tags": [
+        "demo"
+    ],
+    "intents": [
+        {
+            "type": "application/ozp-demo-ball+json",
+            "action": "view",
+            "icon": "http://localhost:15002/largeIcon.png",
+            "label": "Red Ball"
+        }
+    ],
+
+    "_links": {
+        "self" : { "href": "/api/application/v1/34567"},
+        "launch" : [{ 
+            "href": "http://localhost:15002/?color=red",
+            "name": "default"
+         }],
+         "icons" : [
+             {"name":"small", "href":"http://localhost:15002/largeIcon.png"},
+             {"name":"large", "href":"http://localhost:15002/smallIcon.png"}
+         ],
+        "screenShots" : [
+            {
+                "href" : "http://localhost:15002/screenShot.png",
+                "title" : "A screenshot"
+            }
+        ]
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "name" : "Debugger",
+    "description" : "The IWC Debugger",
+    "type" : "application",
+    "state" : "active",
+    "uiHints": {
+        "width" : 400,
+        "height" : 400,
+        "singleton" : false
+    },
+    "tags": [
+        "demo"
+    ],
+    "intents": [ ],
+
+    "_links": {
+        "self" : { "href": "/api/application/v1/67890"},
+        "launch" : [{ 
+            "href": "http://localhost:13000/tools/debugger",
+            "name": "default"
+         }],
+         "icons" : [
+             {"name":"small", "href":"http://localhost:13000/tools/debugger/largeIcon.png"},
+             {"name":"large", "href":"http://localhost:13000/tools/debugger/smallIcon.png"}
+         ],
+        "screenShots" : [
+            {
+                "href" : "http://localhost:13000/tools/debugger/screenShot.png",
+                "title" : "A screenshot"
+            }
+        ]
+    }
+}
