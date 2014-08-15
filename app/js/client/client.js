@@ -211,13 +211,14 @@ var makeCommonWrapper=function() {
 
 var augment=function(obj,methods,callback) {
     for (var m in methods) {
-        obj[m]=function() {
-            callback(this,m,arguments);
+        obj[methods[m]]=function(resource,fragment,cb) {
+            return callback(obj,methods[m],resource,fragment,cb);
         }
     }
+    return obj;
 }
 
-var invokeApi=function(self,action,resource,packet,callback) {
+var invokeApi=function(self,action,resource,fragment,callback) {
     var resolveCB=function(){};
     var rejectCB=function(){};
     var p=new Promise(function(resolve,reject) {
@@ -227,9 +228,31 @@ var invokeApi=function(self,action,resource,packet,callback) {
     if (self.error) {
         rejectCB(self.error);
     } else {
-        var value=self.api.findOrMakeValue(packet);
-        var method="handle" + action.charAt(0).toUpperCase() + action.slice(1).toLowerCase();
-        //self.api[method](...);
+        var packet={
+            'dst': self.api.name,
+            'action': action,
+            'resource': resource
+
+        };
+        for(var k in fields) {
+            packet[k]=fragment[k];
+        }
+        try {
+            this.send(packet, function (response) {
+                if (response.action === 'ok') {
+                    resolveCB(response);
+                } else if (/(bad|no).*/.test(response.action)) {
+                    rejectCB(response.action);
+                }
+                if (callback && !(/(bad|no).*/.test(response.action))) {
+                    callback(response);
+                }
+            });
+        }  catch (error) {
+            if (!p.isResolved()) {
+                rejectCB(error);
+            }
+        }
     }
     return p;
 }
