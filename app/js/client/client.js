@@ -229,7 +229,7 @@ var invokeApi=function(self,action,resource,packet,callback) {
     } else {
         var value=self.api.findOrMakeValue(packet);
         var method="handle" + action.charAt(0).toUpperCase() + action.slice(1).toLowerCase();
-        self.api[method](...);
+        //self.api[method](...);
     }
     return p;
 }
