@@ -1,5 +1,7 @@
 var ozpIwc=ozpIwc || {};
 
+var self;
+
 /**
  * @class
  * This class will be heavily modified in the future.
@@ -31,7 +33,7 @@ ozpIwc.Client=function(config) {
     this.sentBytes=0;
     this.startTime=ozpIwc.util.now();
     this.window = window;
-    var self=this;
+    self=this;
 
     if(this.autoPeer) {
         this.findPeer();
@@ -211,47 +213,57 @@ var makeCommonWrapper=function() {
 
 var augment=function(obj,methods,callback) {
     for (var m in methods) {
-        obj[methods[m]]=function(resource,fragment,cb) {
-            return callback(obj,methods[m],resource,fragment,cb);
-        }
+        addMethod(obj,methods[m],callback);
     }
     return obj;
 }
 
-var invokeApi=function(self,action,resource,fragment,callback) {
+var addMethod=function(obj,method,callback) {
+    obj[method] = function(resource, fragment, cb) {
+        return callback.call(obj,method,resource, fragment, cb);
+    };
+}
+
+var invokeApi=function(action,resource,fragment,callback) {
     var resolveCB=function(){};
     var rejectCB=function(){};
     var p=new Promise(function(resolve,reject) {
         resolveCB=resolve;
         rejectCB=reject;
     });
-    if (self.error) {
-        rejectCB(self.error);
+    var that=this;
+    if (that.error) {
+        rejectCB(that.error);
     } else {
         var packet={
-            'dst': self.api.name,
+            'dst': that.api.participant.name,
             'action': action,
             'resource': resource
 
         };
-        for(var k in fields) {
+        for(var k in fragment) {
             packet[k]=fragment[k];
         }
+        var resolved=false;
         try {
-            this.send(packet, function (response) {
-                if (response.action === 'ok') {
+            self.send(packet, function (response) {
+                if (response.action === 'ok' && !resolved) {
                     resolveCB(response);
-                } else if (/(bad|no).*/.test(response.action)) {
+                    resolved=true;
+                } else if (/(bad|no).*/.test(response.action) && !resolved) {
                     rejectCB(response.action);
+                    resolved=true;
                 }
                 if (callback && !(/(bad|no).*/.test(response.action))) {
                     callback(response);
+                    return true;//persist
                 }
+                return false;
             });
         }  catch (error) {
-            if (!p.isResolved()) {
-                rejectCB(error);
-            }
+            //Would be nice to check that the promise is not already resolved, since we don't know
+            //where the exception will occur, but there is no isResolved() or equivalent method
+            rejectCB(error);
         }
     }
     return p;

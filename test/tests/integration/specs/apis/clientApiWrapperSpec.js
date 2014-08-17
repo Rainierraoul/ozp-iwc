@@ -86,10 +86,7 @@ describe("client api wrapper integration", function () {
 
                                 expect(packet.entity).toEqual('testData');
 
-                                if (!called) {
-                                    called = true;
-                                    done();
-                                }
+                                done();
                             }
                         })
                         .catch(function(error) {
@@ -120,26 +117,28 @@ describe("client api wrapper integration", function () {
     it('Client watches & un-watches keys', function (done) {
         var called = false;
 
+        client.api('data.api').watch('/test',{},function(packet) {
+            if (packet.action === "changed") {
+                expect(packet.entity.newValue).toEqual('testData');
+                client.api('data.api').unwatch('/test',{})
+                    .then(function(packet2) {
+                        if (!called) {
+                            called = true;
+
+                            expect(packet2.action).toEqual('ok');
+
+                            done();
+                        }
+                    })
+                    .catch(function(error) {
+                        expect(error).toBeUndefined();
+                    });
+            }
+        });
+
         client.api('data.api').set('/test',{entity: 'testData'})
             .then(function(packet) {
-                client.api('data.api').watch('/test',{},function(packet) {
-                    if (packet.action === "changed") {
-                        expect(packet.entity.newValue).toEqual('testData');
-                        client.api('data.api').unwatch('/test',{})
-                            .then(function(packet) {
-                                if (!called) {
-                                    called = true;
-
-                                    expect(packet.action).toEqual('ok');
-
-                                    done();
-                                }
-                            })
-                            .catch(function(error) {
-                                expect(error).toBeUndefined();
-                            });
-                    }
-                });
+                expect(packet.action).toEqual('ok');
             })
             .catch(function(error) {
                 expect(error).toBeUndefined();
