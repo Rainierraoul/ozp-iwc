@@ -5,7 +5,7 @@ ozpIwc.NamesApiValue = ozpIwc.util.extend(ozpIwc.CommonApiValue,function(config)
     this.pInfoMap={};
     this.pInfoMap.postMessageProxy=['origin','credentials','securityAttributes'];
     this.pInfoMap.multicast=['members','securityAttributes'];
-    this.pInfoMap.leaderGroupMember=['electionAddress','priority','electionTimeout','leaderState','electionQueue','leader','leaderPriority','securityAttributes'];
+    this.pInfoMap.leaderGroupMember=['electionAddress','priority','electionTimeout','leaderState','leader','leaderPriority','securityAttributes'];
 });
 
 ozpIwc.NamesApiValue.prototype.set=function(packet) {

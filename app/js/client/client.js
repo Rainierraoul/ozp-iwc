@@ -2,6 +2,11 @@ var ozpIwc=ozpIwc || {};
 
 var self;
 
+//TODO get these from the api registry when available
+var intents_methods=['register','unregister','invoke','listen','broadcast'];
+
+var data_methods=['list','push','pop','unshift','shift'];
+
 /**
  * @class
  * This class will be heavily modified in the future.
@@ -189,21 +194,18 @@ ozpIwc.Client.prototype.api=function(apiName) {
     var wrapper=makeCommonWrapper();
     switch(apiName) {
         case 'names.api':
-            wrapper.api=ozpIwc.namesApi;
         case 'system.api':
-            wrapper.api=ozpIwc.systemApi;
             break;
         case 'intents.api':
-            wrapper =augment(wrapper,['register','unregister','invoke','listen','broadcast'],invokeApi);
-            wrapper.api=ozpIwc.intentsApi;
+            wrapper =augment(wrapper,intents_methods,invokeApi);
             break;
         case 'data.api':
-            wrapper=augment(wrapper,['list','push','pop','unshift','shift'],invokeApi);
-            wrapper.api=ozpIwc.dataApi;
+            wrapper=augment(wrapper,data_methods,invokeApi);
             break;
         default:
             wrapper.error='Invalid API';
     }
+    wrapper.apiName=apiName;
     return wrapper;
 }
 
@@ -236,7 +238,7 @@ var invokeApi=function(action,resource,fragment,callback) {
         rejectCB(that.error);
     } else {
         var packet={
-            'dst': that.api.participant.name,
+            'dst': that.apiName,
             'action': action,
             'resource': resource
 
