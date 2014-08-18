@@ -9,12 +9,12 @@ describe("intents.api integration", function () {
     });
     
     var participant=with_participant({
-        clientUrl: "http://localhost:14000/integration/additionalOrigin.html"
+        clientUrl: "http://localhost:14000/integration/additionalOrigin.html",
         peerUrl:"http://" + window.location.hostname + ":13000"
     });
     
 
-    describe('Common Actions', function () {
+    xdescribe('Common Actions', function () {
 
         var registerPacket = function (resource) {
             return {

@@ -1,5 +1,12 @@
 var ozpIwc=ozpIwc || {};
 
+var self;
+
+//TODO get these from the api registry when available
+var intents_methods=['register','unregister','invoke','listen','broadcast'];
+
+var data_methods=['list','push','pop','unshift','shift'];
+
 /**
  * @class
  * This class will be heavily modified in the future.
@@ -31,7 +38,7 @@ ozpIwc.Client=function(config) {
 	this.sentBytes=0;
 	this.startTime=ozpIwc.util.now();
     this.window = window;
-	var self=this;
+	self=this;
 
 	if(this.autoPeer) {
 		this.findPeer();
@@ -206,3 +213,87 @@ ozpIwc.Client.prototype.requestAddress=function(){
         return null;//de-register callback
 	});
 };
+
+ozpIwc.Client.prototype.api=function(apiName) {
+    var wrapper=makeCommonWrapper();
+    switch(apiName) {
+        case 'names.api':
+        case 'system.api':
+            break;
+        case 'intents.api':
+            wrapper =augment(wrapper,intents_methods,invokeApi);
+            break;
+        case 'data.api':
+            wrapper=augment(wrapper,data_methods,invokeApi);
+            break;
+        default:
+            wrapper.error='Invalid API';
+    }
+    wrapper.apiName=apiName;
+    return wrapper;
+}
+
+var makeCommonWrapper=function() {
+    return augment({},['get','set','delete','watch','unwatch'],invokeApi)
+}
+
+var augment=function(obj,methods,callback) {
+    for (var m in methods) {
+        addMethod(obj,methods[m],callback);
+    }
+    return obj;
+}
+
+var addMethod=function(obj,method,callback) {
+    obj[method] = function(resource, fragment, cb) {
+        return callback.call(obj,method,resource, fragment, cb);
+    };
+}
+
+var invokeApi=function(action,resource,fragment,callback) {
+    fragment=fragment || {};
+    fragment.entity=fragment.entity || {};
+    resource=resource || '';
+    var resolveCB=function(){};
+    var rejectCB=function(){};
+    var p=new Promise(function(resolve,reject) {
+        resolveCB=resolve;
+        rejectCB=reject;
+    });
+    var that=this;
+    if (that.error) {
+        rejectCB(that.error);
+    } else {
+        var packet={
+            'dst': that.apiName,
+            'action': action,
+            'resource': resource
+
+        };
+        for(var k in fragment) {
+            packet[k]=fragment[k];
+        }
+        var resolved=false;
+        try {
+            self.send(packet, function (response) {
+                if (response.action === 'ok' && !resolved) {
+                    resolveCB(response);
+                    resolved=true;
+                } else if (/(bad|no).*/.test(response.action) && !resolved) {
+                    rejectCB(response.action);
+                    resolved=true;
+                }
+                if (callback && !(/(bad|no).*/.test(response.action))) {
+                    callback(response);
+                    return true;//persist
+                }
+                return false;
+            });
+        }  catch (error) {
+            //Would be nice to check that the promise is not already resolved, since we don't know
+            //where the exception will occur, but there is no isResolved() or equivalent method
+            rejectCB(error);
+        }
+    }
+    return p;
+}
