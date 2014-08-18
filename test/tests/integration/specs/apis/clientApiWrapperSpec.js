@@ -2,7 +2,7 @@
  * Network Integration
  */
 
-describe("client api wrapper integration", function () {
+describe("Client API wrapper integration", function () {
     var client;
 
     beforeEach(function (done) {
@@ -30,22 +30,14 @@ describe("client api wrapper integration", function () {
     });
 
 
-    describe('Data API Common Actions', function () {
-
-        var getFragment = {
-            resource: "/test"
-        };
-
-        beforeEach(function () {
-
-        });
+    describe('Data API Actions', function () {
 
         afterEach(function (done) {
             var called = false;
-            client.api('data.api').delete('/test',{})
-                .then(function(packet) {
+            client.api('data.api').delete('/test')
+                .then(function (packet) {
                     expect(packet.action).toEqual('ok');
-                }).catch(function(error) {
+                }).catch(function (error) {
                     expect(error).toBeUndefined();
                 });
             if (!called) {
@@ -57,8 +49,8 @@ describe("client api wrapper integration", function () {
 
         it('Client sets values', function () {
             var called = false;
-            client.api('data.api').set('/test',{ entity: "testData"})
-                .then(function(packet) {
+            client.api('data.api').set('/test', { entity: "testData"})
+                .then(function (packet) {
                     if (!called) {
                         called = true;
                         expect(packet.action).toEqual('ok');
@@ -68,7 +60,7 @@ describe("client api wrapper integration", function () {
                         }
                     }
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     expect(error).toBeUndefined();
                 });
         });
@@ -77,10 +69,10 @@ describe("client api wrapper integration", function () {
         it('Client gets values', function (done) {
             var called = false;
 
-            client.api('data.api').set('/test',{ entity: "testData"})
-                .then(function(packet) {
-                    client.api('data.api').get('/test',{})
-                        .then(function(packet) {
+            client.api('data.api').set('/test', { entity: "testData"})
+                .then(function (packet) {
+                    client.api('data.api').get('/test', {})
+                        .then(function (packet) {
                             if (!called) {
                                 called = true;
 
@@ -89,230 +81,71 @@ describe("client api wrapper integration", function () {
                                 done();
                             }
                         })
-                        .catch(function(error) {
+                        .catch(function (error) {
                             expect(error).toBeUndefined();
                         })
                 })
-                .catch(function(error) {
+                .catch(function (error) {
                     expect(error).toBeUndefined();
                 });
         });
-    });
 
-    it('Client deletes values', function (done) {
-        var called = false;
-        client.api('data.api').delete('/test',{})
-            .then(function(packet) {
-                expect(packet.action).toEqual('ok');
-                if (!called) {
-                    called = true;
-                    done();
-                }
-            }).catch(function(error) {
-                expect(error).toBeUndefined();
-            });
-    });
-
-
-    it('Client watches & un-watches keys', function (done) {
-        var called = false;
-
-        client.api('data.api').watch('/test',{},function(packet) {
-            if (packet.action === "changed") {
-                expect(packet.entity.newValue).toEqual('testData');
-                client.api('data.api').unwatch('/test',{})
-                    .then(function(packet2) {
-                        if (!called) {
-                            called = true;
-
-                            expect(packet2.action).toEqual('ok');
-
-                            done();
-                        }
-                    })
-                    .catch(function(error) {
-                        expect(error).toBeUndefined();
-                    });
-            }
+        it('Client deletes values', function (done) {
+            var called = false;
+            client.api('data.api').delete('/test')
+                .then(function (packet) {
+                    expect(packet.action).toEqual('ok');
+                    if (!called) {
+                        called = true;
+                        done();
+                    }
+                }).catch(function (error) {
+                    expect(error).toBeUndefined();
+                });
         });
 
-        client.api('data.api').set('/test',{entity: 'testData'})
-            .then(function(packet) {
-                expect(packet.action).toEqual('ok');
+
+        it('Client watches & un-watches keys', function (done) {
+            var called = false;
+
+            client.api('data.api').watch('/test', {}, function (packet) {
+                if (packet.action === "changed") {
+                    expect(packet.entity.newValue).toEqual('testData');
+                    client.api('data.api').unwatch('/test', {})
+                        .then(function (packet2) {
+                            if (!called) {
+                                called = true;
+
+                                expect(packet2.action).toEqual('ok');
+
+                                done();
+                            }
+                        })
+                        .catch(function (error) {
+                            expect(error).toBeUndefined();
+                        });
+                }
             })
-            .catch(function(error) {
-                expect(error).toBeUndefined();
-            });
-    });
+                .catch(function(error) {
+                    expect(error).toEqual(');')
+                });
 
-    xdescribe('Collection-like Actions', function () {
-
-        var deletePacket = {
-            dst: "data.api",
-            action: "delete",
-            resource: "/test"
-        };
-        var listPacket = {
-            dst: "data.api",
-            action: "list",
-            resource: "/test"
-        };
-
-        var pushPacket = {
-            dst: "data.api",
-            action: "push",
-            resource: "/test",
-            entity: 'testData'
-        };
-
-        beforeEach(function () {
-
+            client.api('data.api').set('/test', {entity: 'testData'})
+                .then(function (packet) {
+                    expect(packet.action).toEqual('ok');
+                })
+                .catch(function (error) {
+                    expect(error).toBeUndefined();
+                });
         });
 
-        afterEach(function (done) {
-            var called = false;
-            client.send(deletePacket, function (reply) {
-                if (!called) {
-                    called = true;
+        xdescribe('Collection-like Actions', function () {
 
-                    done();
-                    return null;
-                }
-            });
-        });
-
-
-        it('Client pushes values', function (done) {
-            var called = false;
-            var sentPushPacket;
-
-            var pushCallback = function (reply) {
-                if (!called) {
-                    called = true;
-
-                    expect(reply.replyTo).toEqual(sentPushPacket.msgId);
-                    expect(reply.action).toEqual('ok');
-
-                    done();
-                    return null;
-                }
-            };
-
-            sentPushPacket = client.send(pushPacket, pushCallback);
-        });
-
-
-        it('Client pops values', function (done) {
-            var called = false;
-            var sentPopPacket, sentPushPacket;
-
-            var pushPacket = {
-                dst: "data.api",
-                action: "push",
-                resource: "/test",
-                entity: 'testData'
-            };
-            var popPacket = {
-                dst: "data.api",
-                action: "pop",
-                resource: "/test"
-            };
-
-            var popCallback = function (reply) {
-                if (!called) {
-                    called = true;
-
-                    expect(reply.replyTo).toEqual(sentPopPacket.msgId);
-                    expect(reply.action).toEqual('ok');
-                    expect(reply.entity).toEqual(sentPushPacket.entity);
-
-                    done();
-                    return null;
-                }
-            };
-
-            var pushCallback = function (reply) {
-                sentPopPacket = client.send(popPacket, popCallback);
-            };
-
-            sentPushPacket = client.send(pushPacket, pushCallback);
-
-        });
-
-
-        it('Client lists values', function (done) {
-            var called = false;
-            var sentListPacket;
-
-            var listCallback = function (reply) {
-                if (!called) {
-                    called = true;
-
-                    expect(reply.replyTo).toEqual(sentListPacket.msgId);
-                    expect(reply.action).toEqual('ok');
-
-                    done();
-                    return null;
-                }
-            };
-
-            sentListPacket = client.send(listPacket, listCallback);
-        });
-
-
-        it('Client unshifts values', function () {
-            var called = false;
-            var sentUnshiftPacket;
-
-            var unshiftPacket = {
-                dst: "data.api",
-                action: "unshift",
-                resource: "/test"
-            };
-
-            var unshiftCallback = function (reply) {
-                if (!called) {
-                    called = true;
-
-                    expect(reply.replyTo).toEqual(sentUnshiftPacket.msgId);
-                    expect(reply.action).toEqual('ok');
-
-                    done();
-                    return null;
-                }
-            };
-
-            sentUnshiftPacket = client.send(unshiftPacket, unshiftCallback);
-        });
-
-
-        it('shifts values', function () {
-            var called = false;
-            var sentShiftPacket;
-
-            var shiftPacket = {
-                dst: "data.api",
-                action: "shift",
-                resource: "/test"
-
-            };
-
-            var shiftCallback = function (reply) {
-                if (!called) {
-                    called = true;
-
-                    expect(reply.replyTo).toEqual(sentShiftPacket.msgId);
-                    expect(reply.action).toEqual('ok');
-
-                    done();
-                    return null;
-                }
-            };
-
-            sentShiftPacket = client.send(shiftPacket, shiftCallback);
+            //TODO implement if needed
         });
     });
-    describe('Intents API Common Actions', function () {
+
+    describe('Intents API Actions', function () {
 
         var registerEntity = function() {
             return {
@@ -473,5 +306,113 @@ describe("client api wrapper integration", function () {
                 });
         });
 
+    });
+
+    describe("Names APi actions", function () {
+
+        var testId="/address/testAddress";
+
+        var testEntity = {
+            entity: {name: 'testName', address: 'testAddress', participantType: 'testType'}
+        };
+
+        afterEach(function (done) {
+            var called = false;
+
+            client.api('names.api').delete(testId,testEntity)
+                .then(function(reply){
+                    if (!called) {
+                        called = true;
+                        expect(reply.action).toEqual('ok');
+                        done();
+                    }
+                })
+                .catch(function(error) {
+                    expect(error).toEqual('');
+                });
+        });
+
+
+        it('Client sets values', function (done) {
+            var called = false;
+            client.api('names.api').set(testId,testEntity)
+                .then(function(reply) {
+                    if (!called) {
+                        called = true;
+                        expect(reply.action).toEqual('ok');
+                        done();
+                    }
+                })
+                .catch(function(error) {
+                    expect(error).toEqual('');
+                });
+        });
+
+
+        it('Client gets values', function (done) {
+            var called = false;
+
+            client.api('names.api').set(testId,testEntity)
+                .then(function(reply) {
+                    client.api('names.api').get(testId,{})
+                        .then(function(reply) {
+                            if (!called) {
+                                called = true;
+                                expect(reply.entity).toEqual(testEntity.entity);
+                                done();
+                            }
+                        })
+                        .catch(function(error) {
+                            expect(error).toEqual('');
+                        });
+                })
+                .catch(function(error) {
+                    expect(error).toEqual('');
+                });
+        });
+
+        it('Client deletes values', function (done) {
+            var called = false;
+
+            client.api('names.api').delete(testId,{})
+                .then(function(reply) {
+                    if (!called) {
+                        called = true;
+                        expect(reply.action).toEqual('ok');
+                        done();
+                    }
+                })
+                .catch(function(error) {
+                    expect(error).toEqual('');
+                });
+        });
+
+
+        it('Client watches & un-watches keys', function (done) {
+            var called = false;
+
+            client.api('names.api').watch(testId,{}, function(reply) {
+                if (!called && reply.action === 'changed') {
+                    called=true;
+                    expect(reply.entity.newValue).toEqual(testEntity.entity);
+                    done();
+                    return true; //persist callback. Not needed for this test, but normally you want to do this
+                }
+            })
+                .then(function(reply) {
+                    if (reply.action === 'ok') {
+                        client.api('names.api').set(testId, testEntity)
+                            .then(function (reply) {
+                                expect(reply.action).toEqual('ok');
+                            })
+                            .catch(function (error) {
+                                expect(error).toEqual('');
+                            });
+                    }
+                })
+                .catch(function(error) {
+                    expect(error).toEqual('');
+                });
+        });
     });
 });

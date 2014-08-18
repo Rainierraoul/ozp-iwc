@@ -29,23 +29,19 @@ describe("names.api integration", function () {
         }
     });
 
-//Api names.api.test created in integrationTestWiring.js to de-conflict integration tests
-//with tests in peerSpec.js using names.api
-
-
     var deletePacket = {
-        dst: "names.api.test",
+        dst: "names.api",
         action: "delete",
         resource: "/address/testAddress"
     };
     var setPacket = {
-        dst: "names.api.test",
+        dst: "names.api",
         action: "set",
         resource: "/address/testAddress",
         entity: {name: 'testName', address: 'testAddress', participantType: 'testType'}
     };
     var getPacket = {
-        dst: "names.api.test",
+        dst: "names.api",
         action: "get",
         resource: "/address/testAddress"
     };
@@ -133,13 +129,13 @@ describe("names.api integration", function () {
         var sentWatchPacket, sentUnwatchPacket, sentSetPacket;
 
         var watchPacket = {
-            dst: "names.api.test",
+            dst: "names.api",
             action: "watch",
             resource: "/address/testAddress"
         };
 
         var unwatchPacket = {
-            dst: "names.api.test",
+            dst: "names.api",
             action: "unwatch",
             resource: "/address/testAddress"
         };

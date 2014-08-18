@@ -227,6 +227,9 @@ var addMethod=function(obj,method,callback) {
 }
 
 var invokeApi=function(action,resource,fragment,callback) {
+    fragment=fragment || {};
+    fragment.entity=fragment.entity || {};
+    resource=resource || '';
     var resolveCB=function(){};
     var rejectCB=function(){};
     var p=new Promise(function(resolve,reject) {
