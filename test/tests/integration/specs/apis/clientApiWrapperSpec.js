@@ -139,10 +139,10 @@ describe("Client API wrapper integration", function () {
                 });
         });
 
-        xdescribe('Collection-like Actions', function () {
-
-            //TODO implement if needed
-        });
+//        xdescribe('Collection-like Actions', function () {
+//
+//            //TODO implement if needed
+//        });
     });
 
     describe('Intents API Actions', function () {
